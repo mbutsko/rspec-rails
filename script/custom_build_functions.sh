@@ -1,5 +1,14 @@
+function travis_retry_on_187 {
+  if is_mri_192_plus; then
+    "$@"
+  else
+    travis_retry "$@"
+  fi
+  return $?
+}
+
 function run_cukes {
-  bin/rake acceptance --trace
+  travis_retry_on_187 bin/rake acceptance --trace
 }
 
 # rspec-rails depends on all of the other rspec repos. Conversely, none of the

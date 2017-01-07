@@ -57,12 +57,15 @@ function run_cukes {
       RUBYOPT="-I${PWD}/../bundle -rbundler/setup" \
          PATH="${PWD}/bin:$PATH" \
          bin/cucumber --strict
-    else
+    elif is_mri_192_plus; then
       # Prepare RUBYOPT for scenarios that are shelling out to ruby,
       # and PATH for those that are using `rspec` or `rake`.
       RUBYOPT="${RUBYOPT} -I${PWD}/../bundle -rbundler/setup" \
          PATH="${PWD}/bin:$PATH" \
          bin/cucumber --strict
+    else
+      # Ruby 1.8.7 is segfaulting at the moment so we retry where possible
+      travis_retry bundle exec cucumber --strict
     fi
   fi
 }
